@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to open a restaurant in New York City</title>
+<meta name="description" content="An interactive, sourced flowchart of every step, agency, fee and timeline involved in opening a restaurant in New York City.">
+<style>
+  :root{
+    --ink:#15181d; --ink-soft:#444b54; --muted:#727a85; --line:#e3e1d8;
+    --paper:#f6f4ec; --card:#fffdf6; --card-edge:#1a1a1a;
+    --slate:#5b6470; --dob:#2f6fb0; --health:#3f8f5b; --fire:#c0392b;
+    --liquor:#7b5ea7; --dot:#d08a1d; --other:#2a9d8f;
+    --shadow:0 1px 0 rgba(0,0,0,.04);
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+    line-height:1.55;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 22px;}
+
+  /* Header */
+  header.masthead{border-bottom:3px solid var(--ink);padding:30px 0 22px;}
+  .kicker{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--fire);
+    font-weight:700;}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,5vw,52px);
+    line-height:1.05;margin:.18em 0 .25em;letter-spacing:-.01em;}
+  .standfirst{font-size:clamp(16px,2.1vw,19px);color:var(--ink-soft);max-width:62ch;margin:0;}
+  .meta-line{margin-top:16px;font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;
+    gap:8px 18px;align-items:center;}
+  .meta-line a{color:var(--muted);}
+
+  /* Stat strip */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:2px solid var(--ink);
+    margin:26px 0 8px;background:var(--card);}
+  .stat{padding:16px 18px;border-right:1px solid var(--line);}
+  .stat:last-child{border-right:none;}
+  .stat .num{font-family:var(--serif);font-size:clamp(26px,4vw,38px);font-weight:600;line-height:1;}
+  .stat .lab{font-size:12.5px;color:var(--muted);margin-top:6px;}
+  @media(max-width:680px){.stats{grid-template-columns:repeat(2,1fr);}
+    .stat:nth-child(2){border-right:none;}.stat:nth-child(1),.stat:nth-child(2){border-bottom:1px solid var(--line);}}
+
+  /* Controls */
+  .controls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;
+    margin:30px 0 14px;}
+  .toggle{display:inline-flex;border:2px solid var(--ink);border-radius:0;overflow:hidden;}
+  .toggle button{font-family:var(--sans);font-size:13.5px;font-weight:600;padding:9px 16px;
+    background:var(--card);border:none;cursor:pointer;color:var(--ink-soft);}
+  .toggle button.active{background:var(--ink);color:#fff;}
+  .legend{display:flex;flex-wrap:wrap;gap:7px;}
+  .chip{font-size:12px;font-weight:600;padding:5px 11px;border:1.5px solid;border-radius:40px;
+    cursor:pointer;background:var(--card);user-select:none;display:inline-flex;align-items:center;gap:6px;
+    transition:opacity .15s;}
+  .chip .dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
+  .chip.off{opacity:.32;}
+
+  /* Phase sections (flow view) */
+  #flow{margin-top:8px;}
+  .phase{margin:30px 0;}
+  .phase-head{display:flex;align-items:baseline;gap:12px;border-bottom:1.5px solid var(--ink);
+    padding-bottom:6px;margin-bottom:16px;}
+  .phase-num{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--muted);}
+  .phase-title{font-family:var(--serif);font-size:21px;font-weight:600;}
+  .phase-when{margin-left:auto;font-size:12.5px;color:var(--muted);font-weight:600;
+    letter-spacing:.03em;text-transform:uppercase;}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:14px;}
+  .card{position:relative;background:var(--card);border:2px solid var(--card-edge);
+    padding:14px 15px 15px;cursor:pointer;box-shadow:var(--shadow);transition:transform .12s,box-shadow .12s;}
+  .card:hover{transform:translateY(-2px);box-shadow:4px 4px 0 rgba(0,0,0,.12);}
+  .card .agency{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    display:inline-flex;align-items:center;gap:6px;}
+  .card .agency .dot{width:9px;height:9px;border-radius:50%;}
+  .card h3{font-family:var(--serif);font-size:17.5px;font-weight:600;margin:9px 0 8px;line-height:1.2;}
+  .card .time{font-size:13px;color:var(--ink-soft);font-weight:600;}
+  .card .fee{font-size:12.5px;color:var(--muted);margin-top:3px;}
+  .card .more{position:absolute;right:12px;bottom:11px;font-size:11px;color:var(--muted);font-weight:600;}
+  .card.hide{display:none;}
+
+  /* Timeline (gantt) view */
+  #timeline{display:none;margin-top:18px;}
+  .gantt{border:2px solid var(--ink);background:var(--card);overflow:hidden;}
+  .gantt-scale{display:grid;grid-template-columns:230px 1fr;border-bottom:1.5px solid var(--ink);
+    font-size:11px;color:var(--muted);font-weight:600;}
+  .gantt-scale .corner{padding:8px 12px;border-right:1px solid var(--line);}
+  .gantt-scale .months{position:relative;height:34px;}
+  .gantt-scale .mtick{position:absolute;top:0;height:100%;border-left:1px dashed #d8d5c8;
+    padding:8px 0 0 6px;}
+  .grow{display:grid;grid-template-columns:230px 1fr;border-bottom:1px solid var(--line);
+    align-items:center;}
+  .grow:last-child{border-bottom:none;}
+  .grow:hover{background:#fbf9f0;}
+  .glabel{padding:10px 12px;border-right:1px solid var(--line);font-size:13px;font-weight:600;
+    display:flex;align-items:center;gap:8px;cursor:pointer;}
+  .glabel .dot{width:9px;height:9px;border-radius:50%;flex:none;}
+  .gtrack{position:relative;height:42px;}
+  .gbar{position:absolute;top:9px;height:24px;border-radius:4px;cursor:pointer;
+    display:flex;align-items:center;padding:0 9px;color:#fff;font-size:11.5px;font-weight:700;
+    white-space:nowrap;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12);}
+  .gbar.dashed{background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.18) 0 6px,transparent 6px 12px);}
+  .grow.hide{display:none;}
+  .gantt-note{font-size:12.5px;color:var(--muted);margin-top:10px;}
+
+  /* Detail drawer */
+  .scrim{position:fixed;inset:0;background:rgba(20,24,29,.42);opacity:0;pointer-events:none;
+    transition:opacity .2s;z-index:40;}
+  .scrim.open{opacity:1;pointer-events:auto;}
+  .drawer{position:fixed;top:0;right:0;height:100%;width:min(440px,92vw);background:var(--card);
+    border-left:3px solid var(--ink);transform:translateX(100%);transition:transform .24s ease;
+    z-index:50;overflow-y:auto;box-shadow:-6px 0 24px rgba(0,0,0,.16);}
+  .drawer.open{transform:translateX(0);}
+  .drawer-in{padding:24px 24px 40px;}
+  .drawer .agency{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    display:inline-flex;align-items:center;gap:7px;}
+  .drawer .agency .dot{width:10px;height:10px;border-radius:50%;}
+  .drawer h2{font-family:var(--serif);font-size:25px;font-weight:600;margin:10px 0 4px;line-height:1.12;}
+  .drawer .d-time{font-size:13.5px;font-weight:600;color:var(--ink-soft);}
+  .drawer .d-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;}
+  .drawer .d-box{border:1.5px solid var(--line);padding:10px 12px;background:var(--paper);}
+  .drawer .d-box .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:700;}
+  .drawer .d-box .v{font-size:14.5px;font-weight:600;margin-top:3px;}
+  .drawer p.body{font-size:14.5px;color:var(--ink-soft);line-height:1.6;}
+  .drawer .src{margin-top:18px;border-top:1.5px solid var(--line);padding-top:14px;}
+  .drawer .src a{color:var(--dob);font-size:13.5px;font-weight:600;text-decoration:none;
+    display:inline-block;border-bottom:1.5px solid var(--dob);}
+  .closeb{position:absolute;top:14px;right:16px;background:none;border:none;font-size:26px;
+    cursor:pointer;color:var(--muted);line-height:1;}
+
+  /* generic sections */
+  section.block{margin:44px 0;}
+  section.block h2{font-family:var(--serif);font-size:26px;font-weight:600;margin:0 0 4px;}
+  section.block .sub{color:var(--muted);font-size:14px;margin:0 0 16px;}
+  .notes{font-size:14.5px;color:var(--ink-soft);max-width:70ch;}
+  .notes li{margin-bottom:9px;}
+
+  /* AI caution */
+  .ai-btn{background:#7a1f2b;color:#fff;border:none;font-family:var(--sans);font-size:12.5px;
+    font-weight:600;padding:8px 14px;border-radius:40px;cursor:pointer;}
+  .ai-pop{display:none;margin-top:12px;background:#10243f;color:#dde6f2;border-radius:10px;
+    padding:18px 20px;font-size:13.5px;line-height:1.55;max-width:74ch;}
+  .ai-pop.open{display:block;}
+  .ai-pop h3{margin:0 0 8px;font-size:15px;color:#fff;}
+  .ai-pop ul{margin:8px 0 0;padding-left:18px;}
+  .ai-pop a{color:#9ec5ff;}
+
+  footer{border-top:3px solid var(--ink);margin-top:50px;padding:26px 0 50px;font-size:13px;color:var(--muted);}
+  footer a{color:var(--ink-soft);}
+  .disclaimer{font-size:12.5px;color:var(--muted);max-width:74ch;margin-top:10px;}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="kicker">New York City &middot; small business</div>
+    <h1>How to open a restaurant in New York City</h1>
+    <p class="standfirst">Every certificate, permit and license — across seven city and state agencies — that stands between a signed lease and a full dining room, with the time each step typically takes.</p>
+    <div class="meta-line">
+      <span>Built from official New York City and New York State sources</span>
+      <span>&middot;</span>
+      <span>Last reviewed June 2026</span>
+      <span>&middot;</span>
+      <a href="#methodology">Methodology &amp; sources</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="stats">
+    <div class="stat"><div class="num" id="s-total">3&ndash;6 mo</div><div class="lab">Typical lease-to-opening time</div></div>
+    <div class="stat"><div class="num">7</div><div class="lab">City and state agencies involved</div></div>
+    <div class="stat"><div class="num">22</div><div class="lab">Days after applying you may open under the health permit</div></div>
+    <div class="stat"><div class="num">6&ndash;10 mo</div><div class="lab">Full liquor license in Manhattan or Brooklyn</div></div>
+  </div>
+
+  <div class="controls">
+    <div class="toggle" role="tablist">
+      <button id="btn-flow" class="active" onclick="setView('flow')">Flow by phase</button>
+      <button id="btn-time" onclick="setView('timeline')">Timeline</button>
+    </div>
+    <div class="legend" id="legend"></div>
+  </div>
+
+  <p style="font-size:13px;color:var(--muted);margin:0 0 8px;">Tap any step for details, fees and the source. Tap a colored agency above to filter.</p>
+
+  <div id="flow"></div>
+  <div id="timeline">
+    <div class="gantt" id="gantt"></div>
+    <p class="gantt-note">Bars show the typical window for each step measured in weeks from lease signing. Many steps run in parallel — construction, licensing and inspections overlap. Striped bars (liquor and outdoor dining) often extend past opening day. Week 0 assumes a lease is already signed and financing is in place.</p>
+  </div>
+
+  <section class="block" id="caveats">
+    <h2>What this does and doesn't cover</h2>
+    <p class="sub">A first-time, single-location, sit-down restaurant in a space already zoned for eating and drinking</p>
+    <ul class="notes">
+      <li>Timelines are typical ranges, not guarantees. A space that already has a commercial kitchen, a current Certificate of Occupancy and no major construction can open far faster; a ground-up build-out, a landmarked building or a contested liquor license can take a year or more.</li>
+      <li>You can legally begin operating <strong>22 days after</strong> you submit your Food Service Establishment Permit application, even before the pre-permit inspection — but a Certificate of Occupancy must already be in place, and alcohol cannot be served until the State Liquor Authority acts.</li>
+      <li>Not every step applies to every restaurant. Outdoor dining, a liquor license, a Place of Assembly permit (75 or more people) and Landmarks review are conditional.</li>
+      <li>Fees listed are government application or permit fees only. They exclude rent, construction, professional fees (architect, expediter, attorney) and insurance, which dwarf the permit costs.</li>
+    </ul>
+  </section>
+
+  <section class="block" id="methodology">
+    <h2>Methodology &amp; sources</h2>
+    <p class="sub">Nothing here is a black box — here is where every figure comes from</p>
+    <ul class="notes">
+      <li><strong>Steps and the 22-day rule, permit fee ($280, plus $25 for frozen desserts), Food Protection Course, pre-permit inspection, Certificate of Authority and insurance requirements:</strong> NYC Department of Health and Mental Hygiene and NYC Business — <a href="https://www.nyc.gov/site/doh/business/food-operators/opening-a-restaurant.page" target="_blank" rel="noopener">Opening a Restaurant</a> and <a href="https://nyc-business.nyc.gov/nycbusiness/description/food-service-establishment-permit" target="_blank" rel="noopener">Food Service Establishment Permit</a>.</li>
+      <li><strong>Construction sequence, Alteration permits, Certificate of Occupancy, FDNY hood suppression and per-step week ranges:</strong> Park Bench Architects, <a href="https://parkbencharchitects.com/opening-a-restaurant-in-nyc-step-by-step-guide-permits-inspections-and-common-pitfalls/" target="_blank" rel="noopener">Opening a Restaurant in NYC: Step-by-Step Guide</a>, cross-checked against NYC Department of Buildings guidance.</li>
+      <li><strong>Liquor license fee ($4,352 full on-premises in New York City), 6&ndash;10 month timeline, 500-foot rule and 30-day community board notice:</strong> NYS Liquor Authority <a href="https://sla.ny.gov/restaurant-license-quick-reference-0" target="_blank" rel="noopener">Restaurant License Quick Reference</a> and the SLA <a href="https://sla.ny.gov/retail-license-fee-chart" target="_blank" rel="noopener">retail license fee chart</a>.</li>
+      <li><strong>Outdoor dining license ($1,050 per café type for four years; up to six-month review):</strong> NYC Department of Transportation, <a href="https://www.diningoutnyc.info/apply/fees" target="_blank" rel="noopener">Dining Out NYC fees</a>.</li>
+      <li><strong>Confidence:</strong> Government fees and the statutory rules (22-day, 500-foot, 30-day) are high confidence. Week-by-week durations are estimates drawn from professional practitioners and will vary by project; treat them as planning guides, not commitments.</li>
+    </ul>
+    <button class="ai-btn" onclick="document.getElementById('aipop').classList.toggle('open')">⚠ AI caution — read before relying on this</button>
+    <div class="ai-pop" id="aipop">
+      <h3>This was assembled with AI assistance</h3>
+      <p>This flowchart was compiled by an AI assistant from the public sources listed above. It is an educational overview, not legal, architectural or business advice. Quality checks performed:</p>
+      <ul>
+        <li>Every fee, the 22-day rule and the 500-foot rule were taken verbatim from official New York City or New York State pages and linked above.</li>
+        <li>Agency names and the sequence of steps were cross-checked across at least two sources.</li>
+      </ul>
+      <p style="margin-top:10px;">Not verified: exact current processing times (these shift), whether a specific step applies to your space, and any rule changes after June 2026. Always confirm with the agency, an expediter or an attorney before acting. Start with the city's official <a href="https://www.nyc.gov/site/doh/business/food-operators/opening-a-restaurant.page" target="_blank" rel="noopener">Opening a Restaurant</a> page.</p>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div>An independent, sourced explainer. Not affiliated with the City of New York. Data current as of June 2026.</div>
+    <p class="disclaimer">Government permit and license fees only; excludes rent, construction and professional fees. Timelines are typical ranges and vary widely by project. Verify every requirement with the relevant agency before acting.</p>
+  </div>
+</footer>
+
+<!-- Detail drawer -->
+<div class="scrim" id="scrim" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <button class="closeb" onclick="closeDrawer()" aria-label="Close">&times;</button>
+  <div class="drawer-in" id="drawer-in"></div>
+</aside>
+
+<script>
+/* ---------- Agencies ---------- */
+const AG = {
+  you:    {name:"You / business setup", color:"#5b6470"},
+  state:  {name:"New York State", color:"#2a9d8f"},
+  dob:    {name:"Buildings (DOB)", color:"#2f6fb0"},
+  health: {name:"Health (DOHMH)", color:"#3f8f5b"},
+  fire:   {name:"Fire (FDNY)", color:"#c0392b"},
+  liquor: {name:"Liquor (SLA)", color:"#7b5ea7"},
+  dot:    {name:"Transportation (DOT)", color:"#d08a1d"},
+};
+
+/* ---------- Steps (week ranges measured from lease signing = week 0) ---------- */
+const STEPS = [
+  {id:1, phase:1, ag:"you", name:"Business plan &amp; financing", w:[0,4], time:"Before you sign",
+   fee:"Varies", cond:false,
+   detail:"Write a business plan, line up financing and decide early whether you will serve alcohol — the liquor license is the single longest item on this list, so the decision shapes your whole timeline.",
+   src:"https://parkbencharchitects.com/opening-a-restaurant-in-nyc-step-by-step-guide-permits-inspections-and-common-pitfalls/", srcName:"Park Bench Architects — step-by-step guide"},
+
+  {id:2, phase:1, ag:"state", name:"Form a business entity", w:[1,2], time:"~1&ndash;2 weeks",
+   fee:"$200 LLC (state)", cond:false,
+   detail:"Register an LLC or corporation with the New York Department of State, or file a business certificate with the county clerk. The State Liquor Authority and Health Department both need a registered entity name and address that match your other filings.",
+   src:"https://sla.ny.gov/restaurant-license-quick-reference-0", srcName:"NYS Liquor Authority — quick reference"},
+
+  {id:3, phase:1, ag:"state", name:"Certificate of Authority (sales tax)", w:[1,3], time:"&quot;May take weeks&quot;",
+   fee:"No fee", cond:false,
+   detail:"Apply to the New York State Department of Taxation and Finance for a Certificate of Authority to collect sales tax. The address on it must match your establishment's address — the Health Department requires proof of this certificate when you apply for your permit, so start early.",
+   src:"https://nyc-business.nyc.gov/nycbusiness/description/food-service-establishment-permit", srcName:"NYC Business — Food Service Establishment Permit"},
+
+  {id:4, phase:1, ag:"you", name:"Sign the lease", w:[1,4], time:"~1&ndash;4 weeks",
+   fee:"Varies", cond:false,
+   detail:"Confirm zoning allows a restaurant (Use Group 6) and that the space has the infrastructure you need — hood, ventilation shaft, gas and electrical. Where possible, negotiate a lease clause so that rent obligations begin only after key permits are issued.",
+   src:"https://parkbencharchitects.com/opening-a-restaurant-in-nyc-step-by-step-guide-permits-inspections-and-common-pitfalls/", srcName:"Park Bench Architects — step-by-step guide"},
+
+  {id:5, phase:2, ag:"dob", name:"Hire architect &amp; design plans", w:[3,8], time:"~3&ndash;8 weeks",
+   fee:"Professional fee", cond:false,
+   detail:"An architect prepares plans covering layout, building and energy codes, accessibility (ADA), kitchen systems, fire safety and mechanical and plumbing work, then files them with the Department of Buildings. Skipping accessibility here leads to costly retrofits later.",
+   src:"https://parkbencharchitects.com/opening-a-restaurant-in-nyc-step-by-step-guide-permits-inspections-and-common-pitfalls/", srcName:"Park Bench Architects — step-by-step guide"},
+
+  {id:6, phase:2, ag:"dob", name:"DOB construction permits", w:[4,16], time:"~weeks 4&ndash;16",
+   fee:"Scaled by job cost", cond:false,
+   detail:"File an Alteration Type 1 or Type 2 application plus separate plumbing, mechanical and sprinkler or fire-alarm permits. Do not start work until permits are issued — working without them triggers stop-work orders and fines.",
+   src:"https://parkbencharchitects.com/opening-a-restaurant-in-nyc-step-by-step-guide-permits-inspections-and-common-pitfalls/", srcName:"Park Bench Architects — step-by-step guide"},
+
+  {id:7, phase:2, ag:"dob", name:"Construction / build-out", w:[4,16], time:"~weeks 4&ndash;16",
+   fee:"Varies widely", cond:false,
+   detail:"The build-out itself, coordinated with DOB progress inspections. Complexity drives the timeline — a turnkey space moves fast, a full gut renovation is the longest pole in the tent.",
+   src:"https://parkbencharchitects.com/opening-a-restaurant-in-nyc-step-by-step-guide-permits-inspections-and-common-pitfalls/", srcName:"Park Bench Architects — step-by-step guide"},
+
+  {id:8, phase:2, ag:"fire", name:"FDNY permits &amp; hood suppression", w:[6,14], time:"~weeks 6&ndash;14",
+   fee:"Per permit", cond:true,
+   detail:"Install an Ansul-type fire suppression system over cooking equipment and obtain FDNY permits for items such as LP gas or high-capacity burners. The hood suppression test is usually scheduled within a week or two of request, near the end of the build-out. A Place of Assembly permit is required for 75 or more people.",
+   src:"https://parkbencharchitects.com/opening-a-restaurant-in-nyc-step-by-step-guide-permits-inspections-and-common-pitfalls/", srcName:"Park Bench Architects — step-by-step guide"},
+
+  {id:9, phase:3, ag:"health", name:"Food Protection Certificate", w:[8,10], time:"1-day class + exam",
+   fee:"Low / often free online", cond:false,
+   detail:"A supervising manager must pass the Food Protection Course and hold a Food Protection Certificate — and be on site at all times. You need the certificate (or proof of course registration) when you apply for the permit, and certification before you open.",
+   src:"https://nyc-business.nyc.gov/nycbusiness/description/food-service-establishment-permit", srcName:"NYC Business — Food Service Establishment Permit"},
+
+  {id:10, phase:3, ag:"liquor", name:"Liquor license (SLA)", w:[4,28], time:"~6&ndash;10 months (full)",
+   fee:"$4,352 full, NYC", cond:true,
+   detail:"Apply to the New York State Liquor Authority for an on-premises license. You must notify the local community board at least 30 days in advance, and the 500-foot rule limits new full liquor licenses near three or more existing ones. Plan 6&ndash;10 months in Manhattan or Brooklyn for full liquor; beer and wine only runs 60&ndash;90 days. A temporary permit (about 30 days to issue, valid 90 days) can bridge the gap.",
+   src:"https://sla.ny.gov/restaurant-license-quick-reference-0", srcName:"NYS Liquor Authority — restaurant quick reference"},
+
+  {id:11, phase:4, ag:"dob", name:"Certificate of Occupancy", w:[14,20], time:"~weeks 14&ndash;20",
+   fee:"Filing fees", cond:false,
+   detail:"No space may be used until the Department of Buildings issues a Certificate of Occupancy (or Letter of Completion) for its current use. The State Liquor Authority typically wants to see this — or a Letter of No Objection — before granting a liquor license. A minor paperwork issue is a common cause of last-minute delay.",
+   src:"https://nyc-business.nyc.gov/nycbusiness/description/food-service-establishment-permit", srcName:"NYC Business — Food Service Establishment Permit"},
+
+  {id:12, phase:4, ag:"health", name:"Food Service Establishment Permit", w:[16,18], time:"Open 22 days after applying",
+   fee:"$280 (+$25 frozen desserts)", cond:false,
+   detail:"Apply through the Health Department's online system with your floor plans, Certificate of Authority, workers' compensation and disability insurance (listing DOHMH as certificate holder) and Food Protection Certificate. You may begin operating 22 days after submitting, even before the pre-permit inspection. To open sooner, call 212-676-1600 for a pre-operating inspection.",
+   src:"https://nyc-business.nyc.gov/nycbusiness/description/food-service-establishment-permit", srcName:"NYC Business — Food Service Establishment Permit"},
+
+  {id:13, phase:4, ag:"health", name:"DOHMH pre-permit inspection", w:[17,20], time:"~weeks 17&ndash;20",
+   fee:"Included", cond:false,
+   detail:"The Health Department inspects the premises against city standards. Pass, and the printed permit is mailed to you. Fail, and you get a punch list and must reschedule. Common failures: a missing or undersized grease trap, too little refrigeration, an improper sink setup or any sign of pests.",
+   src:"https://nyc-business.nyc.gov/nycbusiness/description/food-service-establishment-permit/after_apply", srcName:"NYC Business — after you apply"},
+
+  {id:14, phase:4, ag:"dot", name:"Outdoor dining (Dining Out NYC)", w:[8,32], time:"Up to ~6-month review",
+   fee:"$1,050 per café / 4 yrs", cond:true,
+   detail:"Apply to the Department of Transportation's Dining Out NYC program for a sidewalk or roadway café. The license is $1,050 per café type for four years ($2,100 for both), plus an annual revocable-consent fee set by size and location. Once an application is complete, review can take up to six months. Sidewalk cafés operate year-round; roadway cafés run April 1 to November 29.",
+   src:"https://www.diningoutnyc.info/apply/fees", srcName:"Dining Out NYC — fees"},
+
+  {id:15, phase:5, ag:"you", name:"Signage, sanitation &amp; music", w:[10,20], time:"~weeks 10&ndash;20",
+   fee:"Varies", cond:true,
+   detail:"Obtain sign permits for exterior changes (plus Landmarks Preservation Commission approval in a historic district), arrange private commercial carting for trash, and secure ASCAP or BMI licenses if you will play copyrighted music.",
+   src:"https://parkbencharchitects.com/opening-a-restaurant-in-nyc-step-by-step-guide-permits-inspections-and-common-pitfalls/", srcName:"Park Bench Architects — step-by-step guide"},
+
+  {id:16, phase:5, ag:"health", name:"Open — and post your permit", w:[20,22], time:"Week 20+",
+   fee:"&mdash;", cond:false,
+   detail:"Post the Health Department permit and Food Protection Certificate where customers can see them. The Health Department will make an unannounced inspection after you open, and every establishment gets an unscheduled inspection each year that determines its letter grade.",
+   src:"https://www.nyc.gov/site/doh/business/food-operators/opening-a-restaurant.page", srcName:"NYC Health — Opening a Restaurant"},
+];
+
+const PHASES = {
+  1:{title:"Set up the business", when:"Weeks 1&ndash;4"},
+  2:{title:"Design &amp; build", when:"Weeks 3&ndash;16"},
+  3:{title:"Get certified &amp; licensed", when:"Weeks 4&ndash;28"},
+  4:{title:"Inspections &amp; final sign-off", when:"Weeks 14&ndash;20"},
+  5:{title:"Open the doors", when:"Weeks 10&ndash;22+"},
+};
+
+const TOTAL_WEEKS = 32;
+let active = new Set(Object.keys(AG)); // all on
+
+/* ---------- Legend ---------- */
+function renderLegend(){
+  const el = document.getElementById('legend');
+  el.innerHTML = Object.entries(AG).map(([k,v])=>
+    `<span class="chip" data-ag="${k}" style="border-color:${v.color};color:${v.color}" onclick="toggleAg('${k}')">
+       <span class="dot" style="background:${v.color}"></span>${v.name}</span>`).join('');
+}
+function toggleAg(k){
+  if(active.has(k)) active.delete(k); else active.add(k);
+  document.querySelectorAll('.chip').forEach(c=>{
+    c.classList.toggle('off', !active.has(c.dataset.ag));
+  });
+  applyFilter();
+}
+function applyFilter(){
+  document.querySelectorAll('.card').forEach(c=>{
+    c.classList.toggle('hide', !active.has(c.dataset.ag));
+  });
+  document.querySelectorAll('.grow').forEach(r=>{
+    r.classList.toggle('hide', !active.has(r.dataset.ag));
+  });
+}
+
+/* ---------- Flow view ---------- */
+function renderFlow(){
+  const el = document.getElementById('flow');
+  let html = '';
+  for(const p of Object.keys(PHASES)){
+    const ph = PHASES[p];
+    const steps = STEPS.filter(s=>s.phase==+p);
+    html += `<div class="phase"><div class="phase-head">
+      <span class="phase-num">${p}</span><span class="phase-title">${ph.title}</span>
+      <span class="phase-when">${ph.when}</span></div><div class="cards">`;
+    for(const s of steps){
+      const c = AG[s.ag].color;
+      html += `<div class="card" data-ag="${s.ag}" onclick="openStep(${s.id})">
+        <span class="agency" style="color:${c}"><span class="dot" style="background:${c}"></span>${AG[s.ag].name}${s.cond?' &middot; if applicable':''}</span>
+        <h3>${s.name}</h3>
+        <div class="time">${s.time}</div>
+        <div class="fee">${s.fee}</div>
+        <span class="more">Details &rarr;</span>
+      </div>`;
+    }
+    html += `</div></div>`;
+  }
+  el.innerHTML = html;
+}
+
+/* ---------- Timeline view ---------- */
+function renderGantt(){
+  const el = document.getElementById('gantt');
+  let scale = `<div class="gantt-scale"><div class="corner">Step</div><div class="months">`;
+  for(let m=0;m<=6;m++){
+    const left = (m*4.345/TOTAL_WEEKS)*100;
+    scale += `<div class="mtick" style="left:${left}%">${m===0?'Lease':'Mo '+m}</div>`;
+  }
+  scale += `</div></div>`;
+
+  let rows = '';
+  for(const s of STEPS){
+    const c = AG[s.ag].color;
+    const left = (s.w[0]/TOTAL_WEEKS)*100;
+    const width = Math.max(((s.w[1]-s.w[0])/TOTAL_WEEKS)*100, 4);
+    const dashed = (s.ag==='liquor'||s.ag==='dot') ? 'dashed':'';
+    rows += `<div class="grow" data-ag="${s.ag}">
+      <div class="glabel" onclick="openStep(${s.id})"><span class="dot" style="background:${c}"></span>${s.name}</div>
+      <div class="gtrack">
+        <div class="gbar ${dashed}" style="left:${left}%;width:${width}%;background:${c}" onclick="openStep(${s.id})" title="${s.time}">${s.time}</div>
+      </div></div>`;
+  }
+  el.innerHTML = scale + rows;
+}
+
+/* ---------- Drawer ---------- */
+function openStep(id){
+  const s = STEPS.find(x=>x.id===id);
+  const c = AG[s.ag].color;
+  document.getElementById('drawer-in').innerHTML = `
+    <span class="agency" style="color:${c}"><span class="dot" style="background:${c}"></span>${AG[s.ag].name}</span>
+    <h2>${s.name}</h2>
+    <div class="d-time">${s.time}${s.cond?' &middot; only if it applies to you':''}</div>
+    <div class="d-grid">
+      <div class="d-box"><div class="k">Government fee</div><div class="v">${s.fee}</div></div>
+      <div class="d-box"><div class="k">Typical window</div><div class="v">Wk ${s.w[0]}&ndash;${s.w[1]}</div></div>
+    </div>
+    <p class="body">${s.detail}</p>
+    <div class="src"><a href="${s.src}" target="_blank" rel="noopener">Source: ${s.srcName} &nearr;</a></div>`;
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawer').setAttribute('aria-hidden','false');
+  document.getElementById('scrim').classList.add('open');
+}
+function closeDrawer(){
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawer').setAttribute('aria-hidden','true');
+  document.getElementById('scrim').classList.remove('open');
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer();});
+
+/* ---------- View toggle ---------- */
+function setView(v){
+  const flow = document.getElementById('flow'), time = document.getElementById('timeline');
+  const bf = document.getElementById('btn-flow'), bt = document.getElementById('btn-time');
+  if(v==='flow'){flow.style.display='block';time.style.display='none';bf.classList.add('active');bt.classList.remove('active');}
+  else{flow.style.display='none';time.style.display='block';bt.classList.add('active');bf.classList.remove('active');}
+}
+
+renderLegend();
+renderFlow();
+renderGantt();
+</script>
+</body>
+</html>
